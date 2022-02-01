@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +7,23 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'IPLDashboard';
+  links = [
+    {
+      name : 'Match',
+      path : '/matches',
+    },
+    {
+      name : 'Player',
+      path : '/players'
+    },
+    {
+      name : 'Points Table',
+      path : '/pointstable'
+    },
+    {
+      name : 'Venue',
+      path : '/venues'
+    }
+  ]
+
 }
