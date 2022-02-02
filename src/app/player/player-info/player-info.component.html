@@ -1,1 +1,76 @@
-<p>player-info works!</p>
+<mat-tab-group dynamicHeight mat-stretch-tabs> 
+    <mat-tab label="Basic information">
+       <div style="padding:2%;text-align: center;width: 100%;">
+            <div class="title">Name</div>
+            <div class="info">jjj</div>
+            <div class="title">Country</div>
+            <div class="info">jjj</div>
+            <div class="title">Batting skill</div>
+            <div class="info">jjj</div>
+            <div class="title">Bowling skill</div>
+            <div class="info">jjj</div>
+        </div>
+    </mat-tab> 
+    <mat-tab label="Batting statistics">
+        <div class="row" style="padding: 2%;">
+            <div class="col-md-2">
+                <div style="padding:2%;">
+                    <div class="title">Matches</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Runs</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Fours</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Sixes</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Fifties</div>
+                    <div class="info">jjj</div>
+                    <div class="title">HS</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Strike Rate</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Strike Rate</div>
+                    <div class="info">jjj</div>
+                </div>        
+            </div>
+            <div class="col-md-10">
+                <div style="margin:1%;height: 70vh;">
+                    <canvas #battingStatsChart></canvas>
+                </div>
+                <div style="display: flex;justify-content: center;">
+                    <ul class="legend">
+                        <li *ngFor="let color of battingLegendColors; let i = index"><span style="background-color: {{color}};"></span> {{battingLegendNames[i]}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+    </mat-tab> 
+    <mat-tab label="Bowling statistics">
+        <div class="row" style="padding: 2%;">
+            <div class="col-md-2">
+                <div style="padding:2%;">
+                    <div class="title">Matches</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Runs</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Balls</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Overs</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Wickets</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Economy</div>
+                    <div class="info">jjj</div>
+                    <div class="title">Five wicket hauls</div>
+                    <div class="info">jjj</div>
+                </div>      
+            </div>
+            <div class="col-md-10">
+                <div style="margin:1%;height: 50vh;">
+                    <canvas #bowlingStatsChart></canvas>
+                </div>
+            </div>
+        </div>
+    </mat-tab> 
+</mat-tab-group>

@@ -46,6 +46,8 @@ import { PlayerListComponent } from './player/player-list/player-list.component'
 import { PlayerInfoComponent } from './player/player-info/player-info.component';
 import { VenueListComponent } from './venue/venue-list/venue-list.component';
 import { VenueInfoComponent } from './venue/venue-info/venue-info.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -66,6 +68,7 @@ import { VenueInfoComponent } from './venue/venue-info/venue-info.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatSidenavModule,
     MatIconModule,
@@ -75,7 +78,8 @@ import { VenueInfoComponent } from './venue/venue-info/venue-info.component';
     MatCardModule,
     MatPaginatorModule,
     MatTabsModule,
-    MatTableModule
+    MatTableModule,
+    NgApexchartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

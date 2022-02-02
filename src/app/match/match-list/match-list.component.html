@@ -1,22 +1,23 @@
 <div style="padding: 1%;">
 <mat-card style="padding: 0%;">
 <mat-list class="match-list">
-    <mat-list-item *ngFor="let message of [1,2,3,4,5,6,7,8,9,10]" routerLink="venue" class="match-item">
+    <mat-list-item *ngFor="let match of matchList" [routerLink]="match.id" class="match-item">
         <!-- <div matLine style="border: 2px solid; padding-bottom : 0px;display: flex; flex-direction: row; justify-content: space-around; width: 100%; align-items: center;">
-                <h2 style="border: 2px solid;"> Team1 </h2>
+                <h2 style="border: 2px solid;"> {{match.team1}} </h2>
                 <h3>vs</h3>
-                <h2> Team2 </h2>
+                <h2>{{match.team2}} </h2>
         </div> -->
-        <h3 matLine style="text-align: center; padding: 0.1%;">Team 1 vs Team 2</h3>
+        <h3 matLine style="text-align: center; padding: 0.1%;">{{match.team1}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  vs       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    {{match.team2}}</h3>
         <h6 matLine style="text-align: center; padding: 0.1%;margin-bottom: 0.1%;">
-                Venue, City <small>jdbfejn jesfbkjsdc</small> </h6>
+                {{match.venue_name}}, {{match.venue_city}} <small>{{match.result}}</small> </h6>
         <mat-divider></mat-divider>
     </mat-list-item>
 </mat-list>
-<mat-paginator [length]="100"
-              [pageSize]="10"
+<mat-paginator [length]="numMatches"
+              [pageSize]="entriesPerPage"
               [pageSizeOptions]="[5, 10, 25, 100]"
-              aria-label="Select page">
+              aria-label="Select page"
+              (page)="onPageChange($event)">
 </mat-paginator>
 </mat-card>
 </div>
