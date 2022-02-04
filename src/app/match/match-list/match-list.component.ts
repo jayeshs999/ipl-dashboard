@@ -15,6 +15,7 @@ export class MatchListComponent implements OnInit {
   constructor(private http : HttpClient) { }
 
   getData(start:number,num:number){
+    console.log(start,num)
     this.http.get(API.serverURL+API.getMatches,{
       params : {
         start : start,
@@ -34,6 +35,6 @@ export class MatchListComponent implements OnInit {
 
   onPageChange(event:any){
     this.entriesPerPage = event.pageSize;
-    this.getData(event.pageindex,this.entriesPerPage);
+    this.getData(event.pageIndex*this.entriesPerPage,this.entriesPerPage);
   }
 }
