@@ -35,8 +35,11 @@ async function matches(start, num){
         values: []
     }
     temp = await execute_query(query)
+    console.log(temp.length)
     result.num_entries = temp.length
-    for (let i=start; i<num; i++){
+    console.log(start + num)
+    for (let i=start; i<start+num; i++){
+        console.log(i)
         if (i >= temp.length) break
         result.matches.push(temp[i])
     }
@@ -394,8 +397,10 @@ pool.on('error', (err, client) => {
 
 
 app.get('/matches', async(request, response) => {
-    const start = request.query.start
-    const num = request.query.num
+    console.log(request.query.start)
+    const start = Number(request.query.start)
+    const num = Number(request.query.num)
+    console.log(start,num)
     matches(start, num).then((res) => {
         response.json(res)
         response.end()
