@@ -270,7 +270,7 @@ async function player_id(id) {
     }
     result.battingStats = (await execute_query(query2))[0]
     if (result.battingStats.strike_rate != 0)
-        result.battingStats.strike_rate = (Number(result.BattingStats.runs) / Number(result.BattingStats.strike_rate))*100 
+        result.battingStats.strike_rate = (Number(result.battingStats.runs) / Number(result.battingStats.strike_rate))*100 
 
     const query3 = {
         text: "select count(distinct match_id) from ball_by_ball where striker=$1",
@@ -311,7 +311,7 @@ async function player_id(id) {
     result.bowlingStats = (await execute_query(query5))[0];
 
     if (result.bowlingStats.balls != 0)
-        result.bowlingStats.economy = result.BowlingStats.runs/result.BowlingStats.overs
+        result.bowlingStats.economy = result.bowlingStats.runs/result.bowlingStats.overs
 
 
     const query6 = {
@@ -358,10 +358,10 @@ async function points_table(year) {
             values: [team_id]
         }
         var query4 = {
-            text: "select count(*) as num_matches, count(*) filter (where match_winner = 1) as won, count(*) filter (where match_winner != 1) as lost, count(*) filter (where match_winner != team1 and match_winner != team2) as tied from match, team where (team1 = 1 or team2 = 1) and team.team_id = 1;",
-            values: []
+            text: "select count(*) as num_matches, count(*) filter (where match_winner = $1) as won, count(*) filter (where match_winner != $1) as lost, count(*) filter (where match_winner != team1 and match_winner != team2) as tied from match, team where (team1 = $1 or team2 = $1) and team.team_id = $1;",
+            values: [team_id, year]
         }
-        result
+        var dict
 
     }
     return result
