@@ -256,6 +256,85 @@ async function match_id(id) {
 
 async function player_id(id) {
     var result = {}
+
+    const query1 = {
+        text: "select player_name as name, country_name as country, batting_hand as batting_skill, bowling_skill from player where player_id = $1;",
+        values: [id]
+    }
+    result.BasicInfo = (await execute_query(query1))[0]
+
+
+    const query2 = {
+        text: "select coalesce(sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, coalesce (count(*), 0) as strike_rate from ball_by_ball where ball_by_ball.striker = $1;",
+        values: [id]
+    }
+    result.BattingStats = (await execute_query(query2))[0]
+    if (result.BattingStats.strike_rate != 0)
+        result.BattingStats.strike_rate = (Number(result.BattingStats.runs) / Number(result.BattingStats.strike_rate))*100 
+
+    const query3 = {
+        text: "select count(distinct match_id) from ball_by_ball where striker=$1",
+        values: [id]
+    }
+    result.BattingStats.matches = (await execute_query(query3))[0].count
+
+    const query4 = {
+        text: "select match_id, sum(runs_scored) from ball_by_ball where striker = $1 group by match_id;",
+        values: [id]
+    }
+    var temp = await execute_query(query4)
+    result.BattingStats.match_ids = await execute_retlist(query4, 'match_id')
+    result.BattingStats.match_runs = await execute_retlist(query4, 'sum')
+
+    var sum = 0
+    var hs = 0
+    var fifty = 0
+    for (let i=0; i<temp.length; i++){
+        sum += Number(temp[i].sum)
+        hs = Math.max(hs, temp[i].sum)
+        if (temp[i].sum >= 50){
+            fifty += 1
+        }
+    }
+    if (temp.length == 0)
+        result.BattingStats.average = 0
+    else
+        result.BattingStats.average = sum/temp.length
+    result.BattingStats.hs = hs
+    result.BattingStats.fifties = fifty
+
+
+    const query5 = {
+        text: "select coalesce(sum(runs_scored),0) as runs, count(*) as balls, count(distinct (over_id, match_id)) as overs, count (*) filter (where out_type is not null and out_type not in ('retired hurt', 'run out')) as wickets from ball_by_ball where bowler = $1;",
+        values: [id]
+    }
+    result.BowlingStats = (await execute_query(query5))[0];
+
+    if (result.BowlingStats.balls != 0)
+        result.BowlingStats.economy = result.BowlingStats.runs/result.BowlingStats.overs
+
+
+    const query6 = {
+        text: "select count(distinct match_id) from ball_by_ball where bowler=$1;",
+        values: [id]
+    }
+    result.BowlingStats.matches = (await execute_query(query6))[0].count
+
+    const query7 = {
+        text: "select match_id, sum(runs_scored) as runs, count (*) filter (where out_type is not null and out_type not in ('retired hurt', 'run out')) as wickets from ball_by_ball where bowler = $1 group by match_id;",
+        values: [id]
+    }
+
+    var temp = await execute_query(query7)
+    result.BowlingStats.match_ids = await execute_retlist(query7, 'match_id')
+    result.BowlingStats.match_runs = await execute_retlist(query7, 'runs')
+    result.BowlingStats.match_wickets = await execute_retlist(query7, 'wickets')
+
+    var num_five = 0
+    for (let i=0;i<temp.length;i++){
+        if (temp[i].wickets >= 5) num_five += 1
+    }
+    result.BowlingStats.five_wickets = num_five
     return result
 }
 
@@ -267,7 +346,6 @@ pool.on('error', (err, client) => {
 
 app.get('/matches', function(request, res) {
     const query = "select match.match_id as id, team_1.team_name as team1, team_2.team_name as team2, venue.venue_name, venue.city_name as venue_city, winner.team_name as winner, match.win_type as win_type, match.win_margin as win_margin from match, venue, team as team_1, team as team_2, team as winner where match.venue_id = venue.venue_id and match.team1 = team_1.team_id and match.team2 = team_2.team_id and match.match_winner = winner.team_id;"
-    // console.log(req.query.start)
     const start = request.query.start
     const num = request.query.num
 
