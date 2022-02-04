@@ -35,11 +35,11 @@ async function matches(start, num){
         values: []
     }
     temp = await execute_query(query)
-    console.log(temp.length)
+    // console.log(temp.length)
     result.num_entries = temp.length
-    console.log(start + num)
+    // console.log(start + num)
     for (let i=start; i<start+num; i++){
-        console.log(i)
+        // console.log(i)
         if (i >= temp.length) break
         result.matches.push(temp[i])
     }
