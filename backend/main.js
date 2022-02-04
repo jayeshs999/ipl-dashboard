@@ -78,7 +78,7 @@ async function match_id(id) {
         values: [id]
     }
     temp = (await execute_query(query4_1))[0]
-    console.log(temp)
+    // console.log(temp)
     result.scorecard.match_info.winner = temp.team_name
     result.scorecard.match_info.win_type = temp.win_type
     result.scorecard.match_info.win_margin = temp.win_margin
@@ -360,12 +360,12 @@ async function player_id(id) {
 
 async function points_table(year) {
     var result = []
-    const query1 = {
-        text: "select * from match where season_year = $1",
-        values: [year]
-    }
-    temp = await execute_query(query1)
-    console.log(temp)
+    // const query1 = {
+    //     text: "select * from match where season_year = $1",
+    //     values: [year]
+    // }
+    // temp = await execute_query(query1)
+    // console.log(temp)
     const query2 = {
         text: "select distinct team1 as team from match where season_year = $1 union select distinct team2 as team from match where season_year = $1 order by team;",
         values: [year]
@@ -381,11 +381,76 @@ async function points_table(year) {
             text: "select count(*) as num_matches, count(*) filter (where match_winner = $1) as won, count(*) filter (where match_winner != $1) as lost, count(*) filter (where match_winner != team1 and match_winner != team2) as tied from match, team where (team1 = $1 or team2 = $1) and team.team_id = $1 and season_year = $2;",
             values: [team_id, year]
         }
+
         var dict = {}
         dict = (await execute_query(query4))[0]
         dict.team_name = (await execute_query(query3))[0].team_name
+        dict.points = 2*Number(dict.won)
+        
+        var runs_scored=0
+        var over_faced=0
+        var runs_conceded=0
+        var over_bowled=0
+
+        var query5 = {
+            text: "select match_id, team1, team2, toss_winner, toss_name from match where (team1 = $1 or team2 = $1) and season_year = $2;",
+            values: [team_id, year]
+        }
+        var temp = await execute_query(query5)
+        
+        for (let i=0;i<temp.length;i++){
+            var match_id = Number(temp[i].match_id)
+            var innings
+            if (temp[i].toss_name == 'bat'){
+                if (team_id == temp[i].toss_winner){
+                    innings = 1
+                }
+                else{
+                    innings = 2
+                }
+            }
+            else{
+                if (team_id == temp[i].toss_winner){
+                    innings = 2
+                }
+                else{
+                    innings = 1
+                }
+            }
+            var query6 = {
+                text: "select sum(runs_scored)+sum(extra_runs) as runs_scored, max(over_id) as overs_faced from ball_by_ball where match_id = $1 and innings_no = $2;",
+                values: [match_id, innings]
+            }
+            var temp2 = (await execute_query(query6))[0]
+            // console.log(temp2)
+            runs_scored += Number(temp2.runs_scored)
+            over_faced += Number(temp2.overs_faced)
+            var query7 = {
+                text: "select sum(runs_scored)+sum(extra_runs) as runs_scored, max(over_id) as overs_faced from ball_by_ball where match_id = $1 and innings_no = $2;",
+                values: [match_id, 3 - innings]
+            }
+            temp2 = (await execute_query(query7))[0]
+            runs_conceded += Number(temp2.runs_scored)
+            over_bowled += Number(temp2.overs_faced)
+        }
+        // console.log(runs_scored, runs_conceded, over_bowled, over_faced)
+        dict.nr = runs_scored/over_faced - runs_conceded/over_bowled
         result.push(dict)
     }
+
+    result.sort(function(a, b) {
+        var keyA1 = a.points
+        var keyA2 = a.nr
+        var keyB1 = b.points
+        var keyB2 = b.nr
+
+        if (a.points < b.points) return 1
+        if (a.points > b.points) return -1
+        if (a.points == b.points) {
+            if (a.nr < b.nr) return 1
+            else return -1
+        }
+    })
     return result
 }
 
@@ -397,10 +462,10 @@ pool.on('error', (err, client) => {
 
 
 app.get('/matches', async(request, response) => {
-    console.log(request.query.start)
+    // console.log(request.query.start)
     const start = Number(request.query.start)
     const num = Number(request.query.num)
-    console.log(start,num)
+    // console.log(start,num)
     matches(start, num).then((res) => {
         response.json(res)
         response.end()
