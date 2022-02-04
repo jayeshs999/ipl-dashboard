@@ -3,38 +3,38 @@
         <mat-tab-group dynamicHeight mat-stretch-tabs color="accent"> 
             <mat-tab label="Match Info">
                 <mat-card style="margin:1%">
-                    <mat-card-title>{{matchInfo.team1}} vs {{matchInfo.team2}}</mat-card-title>
-                    <mat-card-subtitle>{{matchInfo.match_id}}</mat-card-subtitle>
+                    <mat-card-title>{{matchInfo?.team1}} vs {{matchInfo?.team2}}</mat-card-title>
+                    <mat-card-subtitle>{{matchInfo?.match_id}}</mat-card-subtitle>
                     <mat-card-content>
                       <mat-list>
                         <mat-list-item>
-                            <div mat-line><b>Venue</b> : {{matchInfo.venue_name}}</div>
+                            <div mat-line><b>Venue</b> : {{matchInfo?.venue_name}}</div>
                         </mat-list-item>
                         <mat-list-item>
-                            <div mat-line><b>Season Year</b> : {{matchInfo.year}}</div>
+                            <div mat-line><b>Season Year</b> : {{matchInfo?.year}}</div>
                         </mat-list-item>
                         <mat-list-item>
-                            <div mat-line><b>Toss Winner</b> : {{matchInfo.toss}}</div>
+                            <div mat-line><b>Toss Winner</b> : {{matchInfo?.toss}}</div>
                         </mat-list-item>
                         <mat-list-item>
-                            <div mat-line><b>Umpires</b> : {{matchInfo.umpires.join(", ")}}</div>
+                            <div mat-line><b>Umpires</b> : {{matchInfo?.umpires.join(", ")}}</div>
                         </mat-list-item>
                       </mat-list>
                     </mat-card-content>
                   </mat-card>
                   <div style="display: flex;justify-content: space-evenly;">
                     <mat-card class="playing-eleven">
-                        <mat-card-title>{{matchInfo.team1}}</mat-card-title>
+                        <mat-card-title>{{matchInfo?.team1}}</mat-card-title>
                         <mat-list>
-                            <mat-list-item *ngFor="let player of matchInfo.playing1">
+                            <mat-list-item *ngFor="let player of matchInfo?.playing1">
                                 {{player}}
                             </mat-list-item>
                           </mat-list>
                     </mat-card>
                     <mat-card class="playing-eleven">
-                        <mat-card-title>{{matchInfo.team2}}</mat-card-title>
+                        <mat-card-title>{{matchInfo?.team2}}</mat-card-title>
                         <mat-list>
-                            <mat-list-item *ngFor="let player of matchInfo.playing2">
+                            <mat-list-item *ngFor="let player of matchInfo?.playing2">
                                 {{player}}
                             </mat-list-item>
                           </mat-list>
@@ -43,7 +43,7 @@
             </mat-tab>
             <mat-tab *ngFor="let i of [0,1]" label="Innings {{i+1}}"> 
                 
-                  <table mat-table [dataSource]="inningsInfo[i].batting.stats" class="mat-elevation-z8 innings-table">
+                  <table *ngIf="inningsInfo" mat-table [dataSource]="inningsInfo[i].batting.stats" class="mat-elevation-z8 innings-table">
                     <!-- Item Column -->
                     <ng-container matColumnDef="batter">
                       <th mat-header-cell *matHeaderCellDef>Batter</th>
@@ -106,9 +106,19 @@
                           </td>
                       </ng-container>
 
+                      <ng-container matColumnDef="team_info">
+                        <th mat-header-cell *matHeaderCellDef colspan="5" style="background-color: gray;font-size: large;color: white;">
+                            {{inningsInfo[i].team}}
+                        </th>
+                      </ng-container>
+
 
                   
                     <!-- The table will render two header rows, one data row per data object, and two footer rows. -->
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="['team_info']"
+                    ></tr>
                     <tr
                       mat-header-row
                       *matHeaderRowDef="battingColumns"
@@ -124,7 +134,7 @@
                       *matFooterRowDef="['extras','extras_info']"
                     ></tr>
                   </table>
-                  <table mat-table [dataSource]="inningsInfo[i].bowling.stats" class="mat-elevation-z8 innings-table">
+                  <table *ngIf="inningsInfo" mat-table [dataSource]="inningsInfo[i].bowling.stats" class="mat-elevation-z8 innings-table">
                     <!-- Item Column -->
                     <ng-container matColumnDef="bowler">
                       <th mat-header-cell *matHeaderCellDef>Bowler</th>
@@ -169,13 +179,16 @@
         </mat-tab-group>
     </mat-tab>
     <mat-tab label="Score Comparison">
-        <div style="margin:1%;height: 80vh;">
-            <canvas #scoreComparisonChart></canvas>
+        <div style="margin:1%;height: 80vh; width: 90%;">
+          <canvas #scoreComparisonChart></canvas>
+        </div>    
+        <div style="text-align: center; width: 95%;">
+          <h2>{{matchInfo?.winner}} won by {{matchInfo?.win_margin}} {{matchInfo?.win_type}}</h2>
         </div>
     </mat-tab>
     <mat-tab label="Summary"> 
         <div style="margin:1%;">
-            <mat-card>
+            <mat-card *ngIf="matchSummary">
                 <mat-card-title>Match Summary</mat-card-title>
                 <mat-card-subtitle>{{matchSummary[0].match_id}}, IPL {{matchSummary[0].season_year}}</mat-card-subtitle>
                 <mat-card-content>

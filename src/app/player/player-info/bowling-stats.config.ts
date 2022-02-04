@@ -1,4 +1,4 @@
-export const BowlingStatsConfig = (match_ids: any, runs_given: any, wickets_taken:any) => {
+export const BowlingStatsConfig = (match_ids: any, runs_given: any, wickets_taken:any):any => {
     return {
         type: 'line',
         data: {

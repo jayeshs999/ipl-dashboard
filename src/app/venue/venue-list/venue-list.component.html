@@ -1,1 +1,40 @@
-<p>venue-list works!</p>
+<div style="padding: 2%;">
+    <table mat-table [dataSource]="venueTable" class="mat-elevation-z8 venue-table">
+        <!-- Item Column -->
+        <ng-container matColumnDef="venue_name">
+          <th mat-header-cell *matHeaderCellDef>Venue</th>
+          <td mat-cell *matCellDef="let info" colspan="2">
+              <a routerLink="/venue/{{info.venue_id}}">{{info.venue_name}}</a>
+        </ng-container>
+      
+        <!-- Cost Column -->
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef>Address</th>
+          <td mat-cell *matCellDef="let info">
+            {{info.venue_city}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="capacity">
+            <th mat-header-cell *matHeaderCellDef>Capacity</th>
+            <td mat-cell *matCellDef="let info">
+              {{info.capacity}}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="total_matches">
+            <th mat-header-cell *matHeaderCellDef>Total matches played</th>
+            <td mat-cell *matCellDef="let info">
+              {{info.total_matches}}
+            </td>
+          </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="tableColumns"
+        ></tr>
+      
+        <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+
+      </table>
+</div>

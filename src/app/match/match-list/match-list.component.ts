@@ -21,9 +21,10 @@ export class MatchListComponent implements OnInit {
         num : num
       }
     }).subscribe((data:any)=>{
-      console.log(data);
+      
       this.numMatches = data.num_entries;
       this.matchList = data.matches;
+      console.log(data);
     })
   }
 

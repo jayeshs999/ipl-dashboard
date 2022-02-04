@@ -7,6 +7,7 @@ import { PlayerInfoComponent } from './player/player-info/player-info.component'
 import { PlayerListComponent } from './player/player-list/player-list.component';
 import { PlayerComponent } from './player/player.component';
 import { PointstableComponent } from './pointstable/pointstable.component';
+import { AddVenueComponent } from './venue/add-venue/add-venue.component';
 import { VenueInfoComponent } from './venue/venue-info/venue-info.component';
 import { VenueListComponent } from './venue/venue-list/venue-list.component';
 import { VenueComponent } from './venue/venue.component';
@@ -24,6 +25,10 @@ const routes: Routes = [
       {
         path: ':match_id',
         component: MatchInfoComponent
+      },
+      {
+        path: '**',
+        redirectTo : ''
       }
     ]
   },
@@ -39,6 +44,10 @@ const routes: Routes = [
       {
         path: ':player_id',
         component: PlayerInfoComponent
+      },
+      {
+        path: '**',
+        redirectTo : ''
       }
     ]
   },
@@ -56,10 +65,18 @@ const routes: Routes = [
         component: VenueListComponent
       },
       {
-        path: ':match_id',
-        component: VenueInfoComponent
+        path: 'add',
+        component: AddVenueComponent
+      },
+      {
+        path: '**',
+        redirectTo : ''
       }
     ]
+  },
+  {
+    path: 'venue/:venue_id',
+    component: VenueInfoComponent
   },
   {
     path: '**',

@@ -6,7 +6,7 @@ export const COLORS = [
 ]
 export const LEGEND_NAMES = ['< 20', '<=30', '<=50', '>50']
 
-export const BattingsStatsConfig = (match_ids: any, runs: any) => {
+export const BattingsStatsConfig = (match_ids: any, runs: any):any => {
     return {
         type: 'bar',
         data: {

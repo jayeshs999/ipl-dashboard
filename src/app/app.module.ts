@@ -48,6 +48,8 @@ import { VenueListComponent } from './venue/venue-list/venue-list.component';
 import { VenueInfoComponent } from './venue/venue-info/venue-info.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { HttpClientModule } from '@angular/common/http';
+import { AddVenueComponent } from './venue/add-venue/add-venue.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -62,13 +64,15 @@ import { HttpClientModule } from '@angular/common/http';
     PlayerListComponent,
     PlayerInfoComponent,
     VenueListComponent,
-    VenueInfoComponent
+    VenueInfoComponent,
+    AddVenueComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
     MatToolbarModule,
     MatSidenavModule,
     MatIconModule,
@@ -79,6 +83,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatPaginatorModule,
     MatTabsModule,
     MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
     NgApexchartsModule,
   ],
   providers: [],

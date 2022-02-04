@@ -14,15 +14,19 @@ export class AppComponent {
     },
     {
       name : 'Player',
-      path : '/players'
+      path : '/players/x'
     },
     {
       name : 'Points Table',
-      path : '/pointstable'
+      path : '/pointstable/x'
     },
     {
       name : 'Venue',
       path : '/venues'
+    },
+    {
+      name : 'Add Venue',
+      path : '/venues/add'
     }
   ]
 
