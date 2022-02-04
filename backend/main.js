@@ -52,6 +52,17 @@ async function match_id(id) {
     result.scorecard.match_info.umpires = await execute_retlist(query2, "umpire_name")
     result.scorecard.match_info.playing1 = await execute_retlist(query3, "player_name")
     result.scorecard.match_info.playing2 = await execute_retlist(query4, "player_name")
+
+    const query4_1 = {
+        text: "select team_name, win_type, win_margin from match, team  where match_id = $1 and match.match_winner = team.team_id;",
+        values: [id]
+    }
+    temp = (await execute_query(query4_1))[0]
+    console.log(temp)
+    result.scorecard.match_info.winner = temp.team_name
+    result.scorecard.match_info.win_type = temp.win_type
+    result.scorecard.match_info.win_margin = temp.win_margin
+    
     const query5 = {
         text: "select team1, team2, toss_winner, toss_name from match where match_id = $1",
         values: [id]
@@ -113,7 +124,7 @@ async function match_id(id) {
         values: [id]
     }
     result.scorecard.innings1.batting.totals = (await execute_query(query10))[0]
-
+    result.scorecard.innings1.batting.totals.extra_runs = result.scorecard.innings1.batting.extra_runs
     result.scorecard.innings1.bowling = {}
 
     const query11 = {
@@ -162,7 +173,8 @@ async function match_id(id) {
         values: [id]
     }
     result.scorecard.innings2.batting.totals = (await execute_query(query17))[0]
-
+    result.scorecard.innings2.batting.totals.extra_runs = result.scorecard.innings2.batting.extra_runs
+    
     result.scorecard.innings2.bowling = {}
 
     const query18 = {
@@ -242,6 +254,11 @@ async function match_id(id) {
     return result
 }
 
+async function player_id(id) {
+    var result = {}
+    return result
+}
+
 const pool = new Pool()
 pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err)
@@ -272,6 +289,14 @@ app.get('/matches', function(request, res) {
 app.get('/matches/:id', async(request, response) => {
     const id = request.params.id;
     match_id(id).then((res)=>{
+        response.json(res);
+        response.end();
+    })
+})
+
+app.get('/players/:id', async(request, response) => {
+    const id = request.params.id;
+    player_id(id).then((res) => {
         response.json(res);
         response.end();
     })
