@@ -261,30 +261,30 @@ async function player_id(id) {
         text: "select player_name as name, country_name as country, batting_hand as batting_skill, bowling_skill from player where player_id = $1;",
         values: [id]
     }
-    result.BasicInfo = (await execute_query(query1))[0]
+    result.basicInfo = (await execute_query(query1))[0]
 
 
     const query2 = {
         text: "select coalesce(sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, coalesce (count(*), 0) as strike_rate from ball_by_ball where ball_by_ball.striker = $1;",
         values: [id]
     }
-    result.BattingStats = (await execute_query(query2))[0]
-    if (result.BattingStats.strike_rate != 0)
-        result.BattingStats.strike_rate = (Number(result.BattingStats.runs) / Number(result.BattingStats.strike_rate))*100 
+    result.battingStats = (await execute_query(query2))[0]
+    if (result.battingStats.strike_rate != 0)
+        result.battingStats.strike_rate = (Number(result.BattingStats.runs) / Number(result.BattingStats.strike_rate))*100 
 
     const query3 = {
         text: "select count(distinct match_id) from ball_by_ball where striker=$1",
         values: [id]
     }
-    result.BattingStats.matches = (await execute_query(query3))[0].count
+    result.battingStats.matches = (await execute_query(query3))[0].count
 
     const query4 = {
         text: "select match_id, sum(runs_scored) from ball_by_ball where striker = $1 group by match_id;",
         values: [id]
     }
     var temp = await execute_query(query4)
-    result.BattingStats.match_ids = await execute_retlist(query4, 'match_id')
-    result.BattingStats.match_runs = await execute_retlist(query4, 'sum')
+    result.battingStats.match_ids = await execute_retlist(query4, 'match_id')
+    result.battingStats.match_runs = await execute_retlist(query4, 'sum')
 
     var sum = 0
     var hs = 0
@@ -297,28 +297,28 @@ async function player_id(id) {
         }
     }
     if (temp.length == 0)
-        result.BattingStats.average = 0
+        result.battingStats.average = 0
     else
-        result.BattingStats.average = sum/temp.length
-    result.BattingStats.hs = hs
-    result.BattingStats.fifties = fifty
+        result.battingStats.average = sum/temp.length
+    result.battingStats.hs = hs
+    result.battingStats.fifties = fifty
 
 
     const query5 = {
         text: "select coalesce(sum(runs_scored),0) as runs, count(*) as balls, count(distinct (over_id, match_id)) as overs, count (*) filter (where out_type is not null and out_type not in ('retired hurt', 'run out')) as wickets from ball_by_ball where bowler = $1;",
         values: [id]
     }
-    result.BowlingStats = (await execute_query(query5))[0];
+    result.bowlingStats = (await execute_query(query5))[0];
 
-    if (result.BowlingStats.balls != 0)
-        result.BowlingStats.economy = result.BowlingStats.runs/result.BowlingStats.overs
+    if (result.bowlingStats.balls != 0)
+        result.bowlingStats.economy = result.BowlingStats.runs/result.BowlingStats.overs
 
 
     const query6 = {
         text: "select count(distinct match_id) from ball_by_ball where bowler=$1;",
         values: [id]
     }
-    result.BowlingStats.matches = (await execute_query(query6))[0].count
+    result.bowlingStats.matches = (await execute_query(query6))[0].count
 
     const query7 = {
         text: "select match_id, sum(runs_scored) as runs, count (*) filter (where out_type is not null and out_type not in ('retired hurt', 'run out')) as wickets from ball_by_ball where bowler = $1 group by match_id;",
@@ -326,15 +326,44 @@ async function player_id(id) {
     }
 
     var temp = await execute_query(query7)
-    result.BowlingStats.match_ids = await execute_retlist(query7, 'match_id')
-    result.BowlingStats.match_runs = await execute_retlist(query7, 'runs')
-    result.BowlingStats.match_wickets = await execute_retlist(query7, 'wickets')
+    result.bowlingStats.match_ids = await execute_retlist(query7, 'match_id')
+    result.bowlingStats.match_runs = await execute_retlist(query7, 'runs')
+    result.bowlingStats.match_wickets = await execute_retlist(query7, 'wickets')
 
     var num_five = 0
     for (let i=0;i<temp.length;i++){
         if (temp[i].wickets >= 5) num_five += 1
     }
-    result.BowlingStats.five_wickets = num_five
+    result.bowlingStats.five_wickets = num_five
+    return result
+}
+
+async function points_table(year) {
+    var result = {}
+    const query1 = {
+        text: "select * from match where season_year = $1",
+        values: [year]
+    }
+    temp = await execute_query(query1)
+    console.log(temp)
+    const query2 = {
+        text: "select distinct team1 as team from match where season_year = $1 union select distinct team2 as team from match where season_year = $1 order by team;",
+        values: [year]
+    }
+    teams = await execute_query(query2)
+    for (let i=0;i<teams.length;i++){
+        var team_id = teams[i].team
+        var query3 = {
+            text: "select team_name from team where team_id = $1",
+            values: [team_id]
+        }
+        var query4 = {
+            text: "select count(*) as num_matches, count(*) filter (where match_winner = 1) as won, count(*) filter (where match_winner != 1) as lost, count(*) filter (where match_winner != team1 and match_winner != team2) as tied from match, team where (team1 = 1 or team2 = 1) and team.team_id = 1;",
+            values: []
+        }
+        result
+
+    }
     return result
 }
 
@@ -380,6 +409,13 @@ app.get('/players/:id', async(request, response) => {
     })
 })
 
+app.get('/pointstable/:year', async(request, response) => {
+    const year = request.params.year;
+    points_table(year).then((res) => {
+        response.json(res);
+        response.end();
+    })
+})
 
 
 var server = app.listen(8081, function () {
