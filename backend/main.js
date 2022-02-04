@@ -109,10 +109,10 @@ async function match_id(id) {
     result.scorecard.innings1.batting.best3 = await execute_retlist(query9, 'striker')
 
     const query10 = {
-        text: "select sum(runs_scored) filter (where runs_scored = 0) as zeros, sum(runs_scored) filter (where runs_scored = 1) as ones, sum(runs_scored) filter (where runs_scored = 2) as twos, sum(runs_scored) filter (where runs_scored = 3) as threes, sum(runs_scored) filter (where runs_scored = 4) as fours, sum(runs_scored) filter (where runs_scored = 5) as fives, sum(runs_scored) filter (where runs_scored = 6) as sixes from ball_by_ball where match_id = $1 and innings_no = 1;",
+        text: "select coalesce (sum(runs_scored) filter (where runs_scored = 0), 0) as zeros, coalesce (sum(runs_scored) filter (where runs_scored = 1), 0) as ones, coalesce (sum(runs_scored) filter (where runs_scored = 2), 0) as twos, coalesce (sum(runs_scored) filter (where runs_scored = 3), 0) as threes, coalesce (sum(runs_scored) filter (where runs_scored = 4), 0) as fours, coalesce (sum(runs_scored) filter (where runs_scored = 5), 0) as fives, coalesce (sum(runs_scored) filter (where runs_scored = 6), 0) as sixes from ball_by_ball where match_id = $1 and innings_no = 1;",
         values: [id]
     }
-    result.scorecard.innings1.batting.totals = await execute_query(query10)
+    result.scorecard.innings1.batting.totals = (await execute_query(query10))[0]
 
     result.scorecard.innings1.bowling = {}
 
@@ -158,10 +158,10 @@ async function match_id(id) {
     result.scorecard.innings2.batting.best3 = await execute_retlist(query16, 'striker')
 
     const query17 = {
-        text: "select sum(runs_scored) filter (where runs_scored = 0) as zeros, sum(runs_scored) filter (where runs_scored = 1) as ones, sum(runs_scored) filter (where runs_scored = 2) as twos, sum(runs_scored) filter (where runs_scored = 3) as threes, sum(runs_scored) filter (where runs_scored = 4) as fours, sum(runs_scored) filter (where runs_scored = 5) as fives, sum(runs_scored) filter (where runs_scored = 6) as sixes from ball_by_ball where match_id = $1 and innings_no = 2;",
+        text: "select coalesce (sum(runs_scored) filter (where runs_scored = 0), 0) as zeros, coalesce (sum(runs_scored) filter (where runs_scored = 1), 0) as ones, coalesce (sum(runs_scored) filter (where runs_scored = 2), 0) as twos, coalesce (sum(runs_scored) filter (where runs_scored = 3), 0) as threes, coalesce (sum(runs_scored) filter (where runs_scored = 4), 0) as fours, coalesce (sum(runs_scored) filter (where runs_scored = 5), 0) as fives, coalesce (sum(runs_scored) filter (where runs_scored = 6), 0) as sixes from ball_by_ball where match_id = $1 and innings_no = 2;",
         values: [id]
     }
-    result.scorecard.innings2.batting.totals = await execute_query(query17)
+    result.scorecard.innings2.batting.totals = (await execute_query(query17))[0]
 
     result.scorecard.innings2.bowling = {}
 
@@ -277,29 +277,10 @@ app.get('/matches/:id', async(request, response) => {
     })
 })
 
+
+
 var server = app.listen(8081, function () {
     var host = server.address().address
     var port = server.address().port
     console.log("Example app listening at http://%s:%s", host, port)
 })
-
-// const client = new Client()
-// client.connect(function(err){
-//     if (err) throw err;
-//     console.log("Connected!");
-// })
-
-// const query = {
-//     text: 'select * from team where team_id = $1',
-//     values: [1],
-// }
-
-// client
-// .query(query)
-// .then(res => {
-//     console.log(res.rows)
-//     client.end()
-// })
-// .catch(e => {
-//     console.error(e.stack)
-// })
