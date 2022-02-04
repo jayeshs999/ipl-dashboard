@@ -60,6 +60,7 @@ async function match_id(id) {
 
     var temp = (await execute_query(query5))[0]
     var innings1, innings2
+    // console.log(temp)
     if (temp.toss_name == 'bat'){
         innings1 = temp.toss_winner
         if (temp.team1 == temp.toss_winner) {
@@ -71,14 +72,15 @@ async function match_id(id) {
     }
     else{
         if (temp.team1 == temp.toss_winner){
-            innings1 = temp.team1
-            innings2 = temp.team2
-        }
-        else{
             innings1 = temp.team2
             innings2 = temp.team1
         }
+        else{
+            innings1 = temp.team1
+            innings2 = temp.team2
+        }
     }
+    // console.log(innings1, innings2)
 
     const query6 = {
         text: "select team_name from team where team_id = $1",
@@ -95,7 +97,7 @@ async function match_id(id) {
     result.scorecard.innings1.batting = (await execute_query(query7))[0]
 
     const query8 = {
-        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, count(*) as balls_faced from player_match left join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.striker, player where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id group by player_match.player_id, player.player_name;",
+        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, count(*) filter (where over_id is not null) as balls_faced from player_match left join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.striker, player where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id group by player_match.player_id, player.player_name;",
         values: [id, innings1]
     }
     result.scorecard.innings1.batting.stats = await execute_query(query8)
@@ -144,7 +146,7 @@ async function match_id(id) {
     result.scorecard.innings2.batting = (await execute_query(query14))[0]
 
     const query15 = {
-        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, count(*) as balls_faced from player_match left join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.striker, player where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id group by player_match.player_id, player.player_name;",
+        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, count(*) filter (where over_id is not null) as balls_faced from player_match left join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.striker, player where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id group by player_match.player_id, player.player_name;",
         values: [id, innings2]
     }
     result.scorecard.innings2.batting.stats = await execute_query(query15)
