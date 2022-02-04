@@ -3,6 +3,7 @@ const Cursor = require('pg-cursor');
 const express = require('express');
 const cors = require('cors');
 const { request, response } = require('express');
+const { match } = require('assert');
 var app = express()
 app.use(cors())
 
@@ -24,6 +25,22 @@ async function execute_retlist(query, name){
         ret.push(res[x][name])
     }
     return ret
+}
+
+async function matches(start, num){
+    var result = {}
+    result.matches = []
+    const query = {
+        text: "select match.match_id as id, team_1.team_name as team1, team_2.team_name as team2, venue.venue_name, venue.city_name as venue_city, winner.team_name as winner, match.win_type as win_type, match.win_margin as win_margin from match, venue, team as team_1, team as team_2, team as winner where match.venue_id = venue.venue_id and match.team1 = team_1.team_id and match.team2 = team_2.team_id and match.match_winner = winner.team_id;",
+        values: []
+    }
+    temp = await execute_query(query)
+    result.num_entries = temp.length
+    for (let i=start; i<num; i++){
+        if (i >= temp.length) break
+        result.matches.push(temp[i])
+    }
+    return result
 }
 
 async function match_id(id) {
@@ -339,7 +356,7 @@ async function player_id(id) {
 }
 
 async function points_table(year) {
-    var result = {}
+    var result = []
     const query1 = {
         text: "select * from match where season_year = $1",
         values: [year]
@@ -358,11 +375,13 @@ async function points_table(year) {
             values: [team_id]
         }
         var query4 = {
-            text: "select count(*) as num_matches, count(*) filter (where match_winner = $1) as won, count(*) filter (where match_winner != $1) as lost, count(*) filter (where match_winner != team1 and match_winner != team2) as tied from match, team where (team1 = $1 or team2 = $1) and team.team_id = $1;",
+            text: "select count(*) as num_matches, count(*) filter (where match_winner = $1) as won, count(*) filter (where match_winner != $1) as lost, count(*) filter (where match_winner != team1 and match_winner != team2) as tied from match, team where (team1 = $1 or team2 = $1) and team.team_id = $1 and season_year = $2;",
             values: [team_id, year]
         }
-        var dict
-
+        var dict = {}
+        dict = (await execute_query(query4))[0]
+        dict.team_name = (await execute_query(query3))[0].team_name
+        result.push(dict)
     }
     return result
 }
@@ -373,25 +392,15 @@ pool.on('error', (err, client) => {
     process.exit(-1)
 })
 
-app.get('/matches', function(request, res) {
-    const query = "select match.match_id as id, team_1.team_name as team1, team_2.team_name as team2, venue.venue_name, venue.city_name as venue_city, winner.team_name as winner, match.win_type as win_type, match.win_margin as win_margin from match, venue, team as team_1, team as team_2, team as winner where match.venue_id = venue.venue_id and match.team1 = team_1.team_id and match.team2 = team_2.team_id and match.match_winner = winner.team_id;"
+
+app.get('/matches', async(request, response) => {
     const start = request.query.start
     const num = request.query.num
-
-    pool.query(query, (error, results) => {
-        if (error){
-            throw error
-        }
-        var response = {}
-        response.num_entries = num
-        response.matches = []
-        for (let i=start; i<start+num;i++){
-            response.matches[i] = results.rows[i]
-        }
-        res.json(response)
-
+    matches(start, num).then((res) => {
+        response.json(res)
+        response.end()
     })
-});
+})
 
 app.get('/matches/:id', async(request, response) => {
     const id = request.params.id;
