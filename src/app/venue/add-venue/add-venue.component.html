@@ -1,0 +1,28 @@
+<mat-card style="margin: 1%;">
+    <mat-card-title style="padding-bottom: 0.2%;">Add Venue</mat-card-title>
+    <mat-divider></mat-divider>
+    <mat-card-content style="padding-top:1%;">
+        <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Name</mat-label>
+            <input [ngModel]="newVenue?.name" (ngModelChange)="newVenue.name = $event" matInput placeholder="Enter the venue name" value="">
+          </mat-form-field>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Country</mat-label>
+            <input [ngModel]="newVenue?.country" (ngModelChange)="newVenue.country = $event" matInput placeholder="Enter the country name" value="">
+          </mat-form-field>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>City</mat-label>
+            <input [ngModel]="newVenue?.city" (ngModelChange)="newVenue.city = $event" matInput placeholder="Enter the city name" value="">
+          </mat-form-field>
+          <mat-form-field class="form-field" appearance="fill">
+            <mat-label>Capacity</mat-label>
+            <input [ngModel]="newVenue?.capacity" (ngModelChange)="newVenue.capacity = $event" matInput placeholder="Enter the venues capacity" type="number">
+          </mat-form-field>
+    </mat-card-content>
+    <mat-card-footer>
+        <div style="width: 100;text-align: center;">
+            <button style="margin-bottom : 1%;width: 40%;" mat-raised-button color="primary" (click)="onSubmit()">Add</button>
+        </div>
+
+    </mat-card-footer>
+</mat-card>
