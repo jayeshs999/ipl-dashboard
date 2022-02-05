@@ -466,6 +466,24 @@ async function venue(id) {
         values: [id]
     }
     result.basicInfo = (await execute_query(query1))[0]
+    const query2 = {
+        text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select coalesce(max(runs2), 0) as maxm from inf  where runs2 > runs1  and venue_id = $1;",
+        values: [id]
+    }
+    result.basicInfo.highest_score_chased = (await execute_query(query2))[0].maxm
+    const query3 = {
+        text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select count(*) filter (where runs1 > runs2) as won_first, count(*) filter (where runs2 > runs1) as won_second, 0 as draw from inf where venue_id = $1;",
+        values: [id]
+    }
+    result.matchOutline = (await execute_query(query3))[0]
+    const query4 = {
+        text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id, match.season_year from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id, match.season_year ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id, I1.season_year from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select season_year, avg(runs1) from inf where venue_id = $1 group by season_year;",
+        values: [id]
+    }
+    result.scoreOutline = {}
+    result.scoreOutline.season_year = await execute_retlist(query4, 'season_year')
+    result.scoreOutline.avg_first_score = await execute_retlist(query4, 'avg')
+    
     return result
 }
 
