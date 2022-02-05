@@ -449,13 +449,23 @@ async function points_table(year) {
     return result
 }
 
-async function venue() {
+async function venues() {
     var result = []
     const query = {
-        text: "select venue_name, city_name as address, capacity, count(*) as total_matches from venue, match where venue.venue_id = match.venue_id group by venue_name, city_name, capacity;",
+        text: "select venue.venue_id, venue_name, city_name as address, capacity, count(*) as total_matches from venue, match where venue.venue_id = match.venue_id group by venue.venue_id, venue_name, city_name, capacity;",
         values: []
     }
     result = await execute_query(query)
+    return result
+}
+
+async function venue(id) {
+    var result = {}
+    const query1 = {
+        text: "select venue_name, city_name as address, capacity, count(*) as total_matches from venue, match where venue.venue_id = match.venue_id and match.venue_id = $1 group by venue_name, city_name, capacity;",
+        values: [id]
+    }
+    result.basicInfo = (await execute_query(query1))[0]
     return result
 }
 
@@ -502,10 +512,19 @@ app.get('/pointstable/:year', async(request, response) => {
 })
 
 app.get('/venues', async(request, response) => {
-    venue().then((res) => {
+    venues().then((res) => {
         response.json(res)
         response.end()
     })
+})
+
+app.get('/venue/:id', async(request, response) => {
+    const id = request.params.id
+    venue(id).then((res) => {
+        response.json(res)
+        response.end()
+    })
+
 })
 
 
