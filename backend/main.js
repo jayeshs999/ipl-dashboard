@@ -466,11 +466,23 @@ async function venue(id) {
         values: [id]
     }
     result.basicInfo = (await execute_query(query1))[0]
+
+    const query2_1 = {
+        text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id, match.season_year from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id, match.season_year)  select max(runs), min(runs) from info where venue_id = $1;",
+        values: [id]
+    }
+    var temp = (await execute_query(query2_1))[0]
+    result.basicInfo.highest_total = temp.max
+    result.basicInfo.lowest_total = temp.min
+    // console.log(temp)
+
     const query2 = {
         text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select coalesce(max(runs2), 0) as maxm from inf  where runs2 > runs1  and venue_id = $1;",
         values: [id]
     }
+    
     result.basicInfo.highest_score_chased = (await execute_query(query2))[0].maxm
+
     const query3 = {
         text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select count(*) filter (where runs1 > runs2) as won_first, count(*) filter (where runs2 > runs1) as won_second, 0 as draw from inf where venue_id = $1;",
         values: [id]
