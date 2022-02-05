@@ -12,27 +12,32 @@ export class AppComponent {
     {
       name : 'Match',
       path : '/matches',
-      icon : 'public'
+      icon : 'public',
+      match_type : false
     },
     {
       name : 'Player',
-      path : '/players/1',
+      path : '/players',
       icon : 'person',
+      match_type : false
     },
     {
       name : 'Points Table',
-      path : '/pointstable/2011',
-      icon : 'poll'
+      path : '/pointstable',
+      icon : 'poll',
+      match_type : false
     },
     {
       name : 'Venue',
       path : '/venues',
       icon : 'location_city',
+      match_type : true
     },
     {
       name : 'Add Venue',
       path : '/venues/add',
       icon : 'add',
+      match_type : true
     }
   ]
 

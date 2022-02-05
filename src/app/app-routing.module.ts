@@ -52,8 +52,23 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'pointstable/:year',
-    component: PointstableComponent,
+    path: 'pointstable',
+    component: MatchComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        component: PointstableComponent,
+      },
+      {
+        path: ':year',
+        component: PointstableComponent
+      },
+      {
+        path: '**',
+        redirectTo : ''
+      }
+    ]
   },
   {
     path: 'venues',

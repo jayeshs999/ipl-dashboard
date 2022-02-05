@@ -13,3 +13,8 @@
 .nav-link{
     padding: 5%;
 }
+
+.active-link{
+    color: blue;
+    background-color: rgba($color: blue, $alpha: 0.1);
+}

@@ -1,11 +1,10 @@
-const {Client, Pool} = require('pg');
-const Cursor = require('pg-cursor');
+const { Pool} = require('pg');
 const express = require('express');
 const cors = require('cors');
-const { request, response } = require('express');
-const { match } = require('assert');
+var bodyParser = require('body-parser');
 var app = express()
 app.use(cors())
+app.use(bodyParser.json());
 
 function execute_query(query) {
     return new Promise(function (resolve, reject) {
@@ -525,12 +524,49 @@ app.get('/matches/:id', async(request, response) => {
     })
 })
 
+app.get('/players/',async(request, response) => {
+
+    const start = Number(request.query.start) || 0
+    const num = Number(request.query.num) || 10
+    
+    let query = {
+        text : 'SELECT * FROM player LIMIT $2 OFFSET $1',
+        values : [start,num]
+    }
+    data = await execute_query(query);
+
+    let num_query = {
+        text : 'SELECT COUNT(*) count FROM player',
+        values : []
+    }
+    
+    nump = await execute_query(num_query);
+    
+    response.json({num_players : nump[0].count,data: data});
+    response.end()
+
+})
+
 app.get('/players/:id', async(request, response) => {
     const id = request.params.id;
     player_id(id).then((res) => {
         response.json(res);
         response.end();
     })
+})
+
+app.get('/pointstable/',async(request, response) => {
+
+    let query = {
+        text : 'SELECT DISTINCT(season_year) FROM match',
+        values : []
+    }
+    
+    execute_retlist(query,'season_year').then((val)=>{
+        response.json(val);
+        response.end()
+    }) 
+
 })
 
 app.get('/pointstable/:year', async(request, response) => {
@@ -557,6 +593,21 @@ app.get('/venue/:id', async(request, response) => {
 
 })
 
+app.post('/venues/add/',async(request, response) => {
+
+    let query = {
+        text : 'INSERT INTO venue(venue_name,country_name,city_name,capacity) VALUES ($1,$2,$3,$4)',
+        values : [request.body.name,request.body.country,request.body.city,request.body.capacity]
+    }
+
+    console.log(query);
+    
+    execute_query(query).then((val)=>{
+        response.json({message : 'New venue added'})
+        response.end()
+    }) 
+
+})
 
 var server = app.listen(8081, function () {
     var host = server.address().address
