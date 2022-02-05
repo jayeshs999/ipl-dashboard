@@ -6,27 +6,33 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  isOpen : boolean = false;
   title = 'IPLDashboard';
   links = [
     {
       name : 'Match',
       path : '/matches',
+      icon : 'public'
     },
     {
       name : 'Player',
-      path : '/players/x'
+      path : '/players/1',
+      icon : 'person',
     },
     {
       name : 'Points Table',
-      path : '/pointstable/x'
+      path : '/pointstable/2011',
+      icon : 'poll'
     },
     {
       name : 'Venue',
-      path : '/venues'
+      path : '/venues',
+      icon : 'location_city',
     },
     {
       name : 'Add Venue',
-      path : '/venues/add'
+      path : '/venues/add',
+      icon : 'add',
     }
   ]
 

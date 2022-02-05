@@ -14,17 +14,21 @@
             <div class="title">Lowest total recorded</div>
             <div class="info">{{venueInfo.basicInfo.lowest_total}}</div>
             <div class="title">Highest score chased</div>
-            <div class="info">{{venueInfo.basicInfo.highest_score_chased}</div>
+            <div class="info">{{venueInfo.basicInfo.highest_score_chased}}</div>
         </div>
     </mat-tab> 
     <mat-tab label="Outline of matches">
-                <div style="margin:1%;height: 70vh;">
-                    <canvas #matchOutlineChart></canvas>
-                </div>
+        <div style="width: 100%;display: flex;justify-content: center;">
+            <div style="margin:1%;height: 80vh; width: 45%;">
+                <canvas #matchOutlineChart style="display: inline;"></canvas>
+            </div></div>
+                
     </mat-tab> 
     <mat-tab label="Bowling statistics">
-                <div style="margin:1%;height: 50vh;">
-                    <canvas #firstScoreChart></canvas>
-                </div>
+        <div style="width: 100%;display: flex;justify-content: center;">
+            <div style="margin:1%;height: 80vh;width: 90%;">
+                <canvas #firstScoreChart></canvas>
+            </div></div>
+                
     </mat-tab> 
 </mat-tab-group>

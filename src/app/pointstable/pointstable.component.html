@@ -1,4 +1,12 @@
-<div style="padding: 2%;">
+<div class="container" style="text-align: center;width: 100%; padding-top: 2%;">
+    <mat-form-field class="form-field" appearance="fill">
+        <mat-label>Select year</mat-label>
+        <mat-select [ngModel]="seasonYear" (ngModelChange)="seasonYear = $event.value" (selectionChange)="navigateTo($event.value)">
+            <mat-option *ngFor="let year of seasonYears" [value]="year">{{year}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+</div>
+<div style="padding: 2%;padding-top: 0%;">
     <table mat-table [dataSource]="pointsTable" class="mat-elevation-z8 points-table">
         <!-- Item Column -->
         <ng-container matColumnDef="team_name">

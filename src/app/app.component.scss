@@ -3,7 +3,12 @@
     flex-grow: 1;
 }
 .sidenav{
-    width: 10%;
+        width: 14%;
+        border-right: none;
+        background: white;
+        color: white;
+        padding: 10px;
+        padding-top: 0px;
 }
 .nav-link{
     padding: 5%;

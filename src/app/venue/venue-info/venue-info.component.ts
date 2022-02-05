@@ -29,6 +29,7 @@ export class VenueInfoComponent implements OnInit {
       this.venueID = params.venue_id;
       this.http.get<VenueInfo>(API.serverURL + API.getVenue + this.venueID).subscribe((data)=>{
         this.venueInfo = data;
+        console.log(this.venueInfo)
         let ctx = this.matchOutlineChart.nativeElement.getContext('2d');
         let chart = new Chart(ctx, MatchOutlineOptions(this.venueInfo.matchOutline))
 

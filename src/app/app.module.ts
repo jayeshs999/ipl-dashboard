@@ -85,6 +85,8 @@ import { FormsModule } from '@angular/forms';
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
+    MatSnackBarModule,
     NgApexchartsModule,
   ],
   providers: [],

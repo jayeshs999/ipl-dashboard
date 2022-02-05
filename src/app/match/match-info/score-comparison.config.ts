@@ -11,7 +11,7 @@ export const ScoreComparisonOptions = (num_balls:any, runs:any, wickets:any, tea
                 }),
                 pointRadius: 0,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                tension: 0
             },
             {
                 label: teams[1],
@@ -20,7 +20,7 @@ export const ScoreComparisonOptions = (num_balls:any, runs:any, wickets:any, tea
                 }),
                 pointRadius: 0,
                 borderColor: 'rgb(175, 46, 92)',
-                tension: 0.1
+                tension: 0
             },
             {
                 data: wickets[1].map((e:any)=>{

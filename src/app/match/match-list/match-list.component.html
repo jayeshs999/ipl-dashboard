@@ -1,7 +1,7 @@
 <div style="padding: 1%;">
 <mat-card style="padding: 0%;">
 <mat-list class="match-list">
-    <mat-list-item *ngFor="let match of matchList" [routerLink]="match.id" class="match-item">
+    <mat-list-item *ngFor="let match of matchList;let ind = index" [routerLink]="match.id" class="match-item" [style.background-color]="ind % 2 ? 'rgba(167, 164, 166, 0.8)' : 'white'">
         <!-- <div matLine style="border: 2px solid; padding-bottom : 0px;display: flex; flex-direction: row; justify-content: space-around; width: 100%; align-items: center;">
                 <h2 style="border: 2px solid;"> {{match.team1}} </h2>
                 <h3>vs</h3>
