@@ -47,7 +47,7 @@
           <ng-container matColumnDef="nr">
             <th mat-header-cell *matHeaderCellDef>NR</th>
             <td mat-cell *matCellDef="let info">
-              {{info.nr}}
+              {{info.nr | number : '1.3-3'}}
             </td>
           </ng-container>
 

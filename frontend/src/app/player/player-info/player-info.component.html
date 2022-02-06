@@ -28,9 +28,9 @@
                     <div class="title">HS</div>
                     <div class="info">{{playerInfo.battingStats.hs}}</div>
                     <div class="title">Strike Rate</div>
-                    <div class="info">{{playerInfo.battingStats.strike_rate}}</div>
+                    <div class="info">{{playerInfo.battingStats.strike_rate | number : '1.2-2'}}</div>
                     <div class="title">Average</div>
-                    <div class="info">{{playerInfo.battingStats.average}}</div>
+                    <div class="info">{{playerInfo.battingStats.average | number : '1.2-2'}}</div>
                 </div>        
             </div>
             <div class="col-md-10" style="display: flex;flex-direction: column;justify-content: center;">
@@ -61,7 +61,7 @@
                     <div class="title">Wickets</div>
                     <div class="info">{{playerInfo.bowlingStats.wickets}}</div>
                     <div class="title">Economy</div>
-                    <div class="info">{{playerInfo.bowlingStats.economy}}</div>
+                    <div class="info">{{playerInfo.bowlingStats.economy | number : '1.2-2'}}</div>
                     <div class="title">Five wicket hauls</div>
                     <div class="info">{{playerInfo.bowlingStats.five_wickets}}</div>
                 </div>      
