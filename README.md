@@ -1,27 +1,29 @@
-# IPLDashboard
+# IITCricInfo
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.0.
+This app provides a simple UI which can be used to view the result of IPL matches whose information is provided in the form of tables in csv files. We have used angular as frontend, Node.js as backend and Postgres as the database server. 
 
-## Development server
+## Instructions to run the code 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+First, using the lab4db.ddl file provided and the data, insert the data into the database named \'lab4db\'. 
 
-## Code scaffolding
+Now, navigate to the directory frontend and run command  
+`npm i` on the terminal to install the required modules
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run the command  `ng serve` to compile and start the frontend.
 
-## Build
+Now, navigate to the backend directory and run the command `npm i` to install the modules. 
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run the command `PGHOST='127.0.0.1' PGUSER='[user]' PGDATABASE='lab4db' PGPASSWORD='[pswd]' PGPORT=5432 node main.js` to start the backend server. 
 
-## Running unit tests
+Now, open the url http://localhost:4200/ and enjoy the app.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+## References used for the assignment
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- https://node-postgres.com
+- https://nodejs.org
+- https://www.tutorialspoint.com/nodejs/index.htm
+-
+-
+-
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
