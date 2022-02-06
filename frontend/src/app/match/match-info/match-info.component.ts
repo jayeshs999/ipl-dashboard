@@ -57,7 +57,7 @@ export class MatchInfoComponent implements OnInit, AfterViewInit {
         info.stats[index].bowler_id = bowler.player_id;
         info.stats[index].wickets = bowler.wickets;
         info.stats[index].bowler_runs = bowler.runs_given;
-        info.stats[index].bowler_balls = bowler.balls_bowled;
+        info.stats[index].bowler_overs = bowler.overs_bowled;
 
       }
 

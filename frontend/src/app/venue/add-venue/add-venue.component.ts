@@ -20,13 +20,13 @@ export class AddVenueComponent implements OnInit {
   onSubmit(){
     console.log(this.newVenue)
     this.http.post(API.serverURL + API.addVenue,this.newVenue).subscribe((res : any)=>{
-      this.snackbar.open(res.message)
+      this.snackbar.open(res.message, '', {duration:2000})
       this.newVenue.name = '';
       this.newVenue.country = '';
       this.newVenue.city = '';
       this.newVenue.capacity = 0;
     },(err)=>{
-      this.snackbar.open('Some error occured. Please try again');
+      this.snackbar.open('Some error occured. Please try again', '',{duration:2000});
     })
   }
 
