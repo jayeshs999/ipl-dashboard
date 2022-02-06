@@ -1,0 +1,285 @@
+<mat-tab-group dynamicHeight mat-stretch-tabs> 
+    <mat-tab label="Scorecard"> 
+        <mat-tab-group dynamicHeight mat-stretch-tabs color="accent"> 
+            <mat-tab label="Match Info">
+                <mat-card style="margin:1%">
+                    <mat-card-title>{{matchInfo?.team1}} vs {{matchInfo?.team2}}</mat-card-title>
+                    <mat-card-subtitle>{{matchInfo?.match_id}}</mat-card-subtitle>
+                    <mat-card-content>
+                      <mat-list>
+                        <mat-list-item>
+                            <div mat-line><b>Venue</b> : {{matchInfo?.venue_name}}</div>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <div mat-line><b>Season Year</b> : {{matchInfo?.year}}</div>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <div mat-line><b>Toss Winner</b> : {{matchInfo?.toss}}</div>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <div mat-line><b>Umpires</b> : {{matchInfo?.umpires.join(", ")}}</div>
+                        </mat-list-item>
+                      </mat-list>
+                    </mat-card-content>
+                  </mat-card>
+                  <div style="display: flex;justify-content: space-evenly;">
+                    <mat-card class="playing-eleven">
+                        <mat-card-title>{{matchInfo?.team1}}</mat-card-title>
+                        <mat-list>
+                            <mat-list-item *ngFor="let player of matchInfo?.playing1">
+                                {{player}}
+                            </mat-list-item>
+                          </mat-list>
+                    </mat-card>
+                    <mat-card class="playing-eleven">
+                        <mat-card-title>{{matchInfo?.team2}}</mat-card-title>
+                        <mat-list>
+                            <mat-list-item *ngFor="let player of matchInfo?.playing2">
+                                {{player}}
+                            </mat-list-item>
+                          </mat-list>
+                    </mat-card>
+                  </div>
+            </mat-tab>
+            <mat-tab *ngFor="let i of [0,1]" label="Innings {{i+1}}"> 
+                
+                  <table *ngIf="inningsInfo" mat-table [dataSource]="inningsInfo[i].batting.stats" class="mat-elevation-z8 innings-table">
+                    <!-- Item Column -->
+                    <ng-container matColumnDef="batter">
+                      <th mat-header-cell *matHeaderCellDef>Batter</th>
+                      <td mat-cell *matCellDef="let info">
+                          <a routerLink="/players/{{info.player_id}}">{{info.player_name}}</a></td>
+                    </ng-container>
+                  
+                    <!-- Cost Column -->
+                    <ng-container matColumnDef="runs">
+                      <th mat-header-cell *matHeaderCellDef>Runs</th>
+                      <td mat-cell *matCellDef="let info">
+                        {{info.runs}}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="fours">
+                        <th mat-header-cell *matHeaderCellDef>Fours</th>
+                        <td mat-cell *matCellDef="let info">
+                          {{info.fours}}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="sixes">
+                        <th mat-header-cell *matHeaderCellDef>Sixes</th>
+                        <td mat-cell *matCellDef="let info">
+                          {{info.sixes}}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="balls_faced">
+                        <th mat-header-cell *matHeaderCellDef>Balls faced</th>
+                        <td mat-cell *matCellDef="let info">
+                          {{info.balls_faced}}
+                        </td>
+                      </ng-container>
+    
+                  
+                    <!-- Disclaimer column -->
+                    <ng-container matColumnDef="extras">
+                      <td mat-footer-cell *matFooterCellDef colspan="2">
+                        Extras
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="total">
+                        <td mat-footer-cell *matFooterCellDef colspan="2" style="background-color: #ccffff;">
+                          Total
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="extras_info">
+                        <td mat-footer-cell *matFooterCellDef colspan="3">
+                            {{inningsInfo[i].batting.extra_runs}}
+                        </td>
+                      </ng-container>
+  
+                      <ng-container matColumnDef="total_info" >
+                          <td mat-footer-cell *matFooterCellDef colspan="3" style="background-color: #ccffff;">
+                            {{inningsInfo[i].batting.total_score}} - {{inningsInfo[i].batting.total_wickets}}
+                          </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="team_info">
+                        <th mat-header-cell *matHeaderCellDef colspan="5" style="background-color: gray;font-size: large;color: white;">
+                            {{inningsInfo[i].team}}
+                        </th>
+                      </ng-container>
+
+
+                  
+                    <!-- The table will render two header rows, one data row per data object, and two footer rows. -->
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="['team_info']"
+                    ></tr>
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="battingColumns"
+                    ></tr>
+                  
+                    <tr mat-row *matRowDef="let row; columns: battingColumns;"></tr>
+                    <tr
+                    mat-footer-row
+                    *matFooterRowDef="['total','total_info']"
+                  ></tr>
+                    <tr
+                      mat-footer-row
+                      *matFooterRowDef="['extras','extras_info']"
+                    ></tr>
+                  </table>
+                  <table *ngIf="inningsInfo" mat-table [dataSource]="inningsInfo[i].bowling.stats" class="mat-elevation-z8 innings-table">
+                    <!-- Item Column -->
+                    <ng-container matColumnDef="bowler">
+                      <th mat-header-cell *matHeaderCellDef>Bowler</th>
+                      <td mat-cell *matCellDef="let info">
+                          <a routerLink="/players/{{info.player_id}}">{{info.player_name}}</a></td>
+                    </ng-container>
+                  
+                    <!-- Cost Column -->
+                    <ng-container matColumnDef="balls_bowled">
+                      <th mat-header-cell *matHeaderCellDef>Runs</th>
+                      <td mat-cell *matCellDef="let info">
+                        {{info.balls_bowled}}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="runs_given">
+                        <th mat-header-cell *matHeaderCellDef>Runs given</th>
+                        <td mat-cell *matCellDef="let info">
+                          {{info.runs_given}}
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="wickets">
+                        <th mat-header-cell *matHeaderCellDef>Wickets taken</th>
+                        <td mat-cell *matCellDef="let info">
+                          {{info.wickets}}
+                        </td>
+                      </ng-container>
+
+
+                  
+                    <!-- The table will render two header rows, one data row per data object, and two footer rows. -->
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="bowlingColumns"
+                    ></tr>
+                  
+                    <tr mat-row *matRowDef="let row; columns: bowlingColumns;"></tr>
+
+                  </table>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-tab>
+    <mat-tab label="Score Comparison">
+      <div style="width: 100%;display: flex;justify-content: center;">
+        <div style="margin:1%;height: 75vh; width: 85%;">
+          <canvas #scoreComparisonChart></canvas>
+        </div>    
+      </div>
+        <div style="text-align: center; width: 100%;">
+          <h2>{{matchInfo?.winner}} won by {{matchInfo?.win_margin}} {{matchInfo?.win_type}}</h2>
+        </div>
+    </mat-tab>
+    <mat-tab label="Summary"> 
+        <div style="margin:1%;">
+            <mat-card *ngIf="matchSummary">
+                <mat-card-title>Match Summary</mat-card-title>
+                <mat-card-subtitle>{{matchSummary[0].match_id}}, IPL {{matchSummary[0].season_year}}</mat-card-subtitle>
+                <mat-card-content>
+                    <table *ngFor="let i of [0,1]" mat-table [dataSource]="summaryInfo[i].stats" class="mat-elevation-z8 summary-table">
+                        <!-- Item Column -->
+                        <ng-container matColumnDef="batter">
+                          <th mat-header-cell *matHeaderCellDef>Batter</th>
+                          <td mat-cell *matCellDef="let info">
+                              <a routerLink="/players/{{info.batsman_id}}">{{info.batsman}}</a>
+                            </td>
+                        </ng-container>
+                      
+                        <!-- Cost Column -->
+                        <ng-container matColumnDef="batter_runs">
+                          <th mat-header-cell *matHeaderCellDef>Runs</th>
+                          <td mat-cell *matCellDef="let info">
+                            {{info.batter_runs}}
+                          </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="batter_balls">
+                            <th mat-header-cell *matHeaderCellDef>Fours</th>
+                            <td mat-cell *matCellDef="let info">
+                              {{info.batter_balls}}
+                            </td>
+                          </ng-container>
+    
+                          <ng-container matColumnDef="bowler">
+                            <td mat-cell *matCellDef="let info">
+                                <a routerLink="/players/{{info.bowler_id}}">{{info.bowler}}</a>
+                            </td>
+                          </ng-container>
+    
+                          <ng-container matColumnDef="bowler_wickets">
+                            <th mat-header-cell *matHeaderCellDef>Balls faced</th>
+                            <td mat-cell *matCellDef="let info">
+                              {{info.wickets}} - {{info.bowler_runs}}
+                            </td>
+                          </ng-container>
+        
+                        <ng-container matColumnDef="bowler_balls">
+                            <th mat-header-cell *matHeaderCellDef>Balls faced</th>
+                            <td mat-cell *matCellDef="let info">
+                              {{info.bowler_balls}}
+                            </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="team">
+                            <th mat-header-cell *matHeaderCellDef colspan=3 style="font-size: x-large;">{{summaryInfo[i].team}}</th>
+                        </ng-container>
+
+    
+                        <ng-container matColumnDef="overs">
+                            <th mat-header-cell *matHeaderCellDef colspan=1>{{summaryInfo[i].total_overs}} Overs</th>
+                        </ng-container>
+      
+                        <ng-container matColumnDef="score">
+                            <th mat-header-cell *matHeaderCellDef colspan=2 style="font-size:large;">{{summaryInfo[i].total_score}} - {{summaryInfo[i].total_wickets}}</th>
+                        </ng-container>
+    
+    
+                      
+                        <!-- The table will render two header rows, one data row per data object, and two footer rows. -->
+                        <tr
+                          mat-header-row
+                          *matHeaderRowDef="['team','overs','score']"
+                        ></tr>
+                      
+                        <tr mat-row *matRowDef="let row; columns: ['batter','batter_runs','batter_balls','bowler','bowler_wickets','bowler_balls'];"></tr>
+                      </table>
+                </mat-card-content>
+                <mat-card-footer>
+                    <h3 style="padding: 1%; font-size: x-large
+                    ; text-align: center;">{{matchInfo?.winner}} won by {{matchInfo?.win_margin}} {{matchInfo?.win_type}}</h3>
+                </mat-card-footer>
+            </mat-card>
+            <div style="display: flex;justify-content: space-around;width: 100%;">
+                <div style="height: 40vh; width: 40vh; display: flex;">
+                    <canvas #runsChart1></canvas>
+                </div>
+                <div style="height: 40vh; width: 40vh; display: flex;">
+                  <canvas #runsChart2></canvas>
+              </div>
+            </div>
+
+            <div style="display: flex;justify-content: center;">
+                
+            </div>
+            
+        </div>
+    </mat-tab>
+</mat-tab-group>

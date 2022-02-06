@@ -1,0 +1,34 @@
+<mat-tab-group dynamicHeight mat-stretch-tabs> 
+    <mat-tab label="Basic information">
+       <div *ngIf="venueInfo" style="padding:2%;text-align: center;width: 100%;">
+            <div class="title">Venue name</div>
+            <div class="info">{{venueInfo.basicInfo.venue_name}}</div>
+            <div class="title">Address</div>
+            <div class="info">{{venueInfo.basicInfo.address}}</div>
+            <div class="title">Capacity</div>
+            <div class="info">{{venueInfo.basicInfo.capacity}}</div>
+            <div class="title">Total matches played</div>
+            <div class="info">{{venueInfo.basicInfo.total_matches}}</div>
+            <div class="title">Highest total recorded</div>
+            <div class="info">{{venueInfo.basicInfo.highest_total}}</div>
+            <div class="title">Lowest total recorded</div>
+            <div class="info">{{venueInfo.basicInfo.lowest_total}}</div>
+            <div class="title">Highest score chased</div>
+            <div class="info">{{venueInfo.basicInfo.highest_score_chased}}</div>
+        </div>
+    </mat-tab> 
+    <mat-tab label="Outline of matches">
+        <div style="width: 100%;display: flex;justify-content: center;">
+            <div style="margin:1%;height: 80vh; width: 45%;">
+                <canvas #matchOutlineChart style="display: inline;"></canvas>
+            </div></div>
+                
+    </mat-tab> 
+    <mat-tab label="Bowling statistics">
+        <div style="width: 100%;display: flex;justify-content: center;">
+            <div style="margin:1%;height: 80vh;width: 90%;">
+                <canvas #firstScoreChart></canvas>
+            </div></div>
+                
+    </mat-tab> 
+</mat-tab-group>
