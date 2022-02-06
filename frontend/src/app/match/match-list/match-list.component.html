@@ -2,7 +2,7 @@
 <mat-card style="padding: 0%;">
 <mat-list class="match-list">
     <mat-list-item *ngFor="let match of matchList;let ind = index" [routerLink]="match.id" class="match-item" [style.background-color]="ind % 2 ? 'rgba(167, 164, 166, 0.8)' : 'white'">
-        <div matLine class="row" style="padding-bottom : 0px;display: flex; flex-direction: row; justify-content: space-evenly; width: 100%; align-items: center;">
+        <div matLine class="row" style="padding-bottom : 0px;display: flex; flex-direction: row; justify-content: space-evenly; width: 100%; align-items: center; margin-top: 0.5%;">
                 <div class="col-md-5" style="text-align: center; font-size: large;font-weight: bold;"> {{match.team1}} </div>
                 <div class="col-md-2" style="text-align: center;"> vs </div>
                 <div class="col-md-5" style="text-align: center; font-size: large; font-weight: bold;"> {{match.team2}} </div>

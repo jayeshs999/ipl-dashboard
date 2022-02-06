@@ -2,6 +2,8 @@ const { Pool} = require('pg');
 const express = require('express');
 const cors = require('cors');
 var bodyParser = require('body-parser');
+require('dotenv').config()
+
 var app = express()
 app.use(cors())
 app.use(bodyParser.json());
@@ -312,7 +314,7 @@ async function player_id(id) {
     for (let i=0; i<temp.length; i++){
         sum += Number(temp[i].sum)
         hs = Math.max(hs, temp[i].sum)
-        if (temp[i].sum >= 50){
+        if (temp[i].sum >= 50 && temp[i].sum < 100){
             fifty += 1
         }
         outs += Number(temp[i].outs)
@@ -510,7 +512,14 @@ async function venue(id) {
     return result
 }
 
-const pool = new Pool()
+const pool = new Pool({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
+  })
+
 pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err)
     process.exit(-1)

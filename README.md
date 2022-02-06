@@ -13,13 +13,23 @@ npm i
 # To compile and start the frontend 
 ng serve
 ``` 
+- Create a new file ```.env``` inside the folder ```backend``` and set the following environment variables
+
+```
+PGHOST=<host-name>
+PGUSER=<database-username> 
+PGDATABASE=<database-name> 
+PGPASSWORD=<password>
+PGPORT=<port>
+```
+
 - Open a new terminal window and navigate to the directory ```backend``` and execute the following commands
 
 ```
 # To install dependencies
 npm i 
 # Run the backend server
-PGHOST='127.0.0.1' PGUSER='[user]' PGDATABASE='lab4db' PGPASSWORD='[pswd]' PGPORT=5432 node main.js 
+node main.js 
 ``` 
 - Open the url http://localhost:4200/ and enjoy using the app.
 
