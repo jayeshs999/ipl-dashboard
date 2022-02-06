@@ -153,7 +153,7 @@ async function match_id(id) {
     result.scorecard.innings1.bowling.stats = await execute_query(query11)
 
     const query12 = {
-        text: "select bowler, player_name, count(*) filter (where out_type is not null) as wickets, sum(runs_scored) as runs_given from ball_by_ball, player  where match_id = $1 and innings_no = 1 and ball_by_ball.bowler = player.player_id  group by bowler, player_name  having count(*) filter (where out_type is not null) > 0 order by wickets desc, runs_given asc, player_name asc limit 3;",
+        text: "select bowler, player_name, count(*) filter (where out_type is not null and out_type not in ('run out', 'retired hurt')) as wickets, sum(runs_scored) as runs_given from ball_by_ball, player  where match_id = $1 and innings_no = 1 and ball_by_ball.bowler = player.player_id  group by bowler, player_name  having count(*) filter (where out_type is not null) > 0 order by wickets desc, runs_given asc, player_name asc limit 3;",
         values: [id]
     }
     result.scorecard.innings1.bowling.best3 = await execute_retlist(query12, 'bowler')
