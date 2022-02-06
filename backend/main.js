@@ -465,18 +465,26 @@ async function venues() {
 async function venue(id) {
     var result = {}
     const query1 = {
-        text: "select venue_name, city_name as address, capacity, count(*) as total_matches from venue, match where venue.venue_id = match.venue_id and match.venue_id = $1 group by venue_name, city_name, capacity;",
+        text: "select venue_name, city_name, capacity, count(*) filter (where match_id is not null) as total_matches from match right join venue on match.venue_id = venue.venue_id where venue.venue_id = $1 group by venue_name, city_name, capacity;",
         values: [id]
     }
     result.basicInfo = (await execute_query(query1))[0]
+    // console.log(result)
 
     const query2_1 = {
         text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id, match.season_year from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id, match.season_year)  select max(runs), min(runs) from info where venue_id = $1;",
         values: [id]
     }
     var temp = (await execute_query(query2_1))[0]
-    result.basicInfo.highest_total = temp.max
-    result.basicInfo.lowest_total = temp.min
+    if (temp.max == null){
+        result.basicInfo.highest_total = 0
+        result.basicInfo.lowest_total = 0
+    }
+    else {
+        result.basicInfo.highest_total = temp.max
+        result.basicInfo.lowest_total = temp.min
+    }
+    
     // console.log(temp)
 
     const query2 = {
