@@ -2,14 +2,15 @@
 <mat-card style="padding: 0%;">
 <mat-list class="match-list">
     <mat-list-item *ngFor="let match of matchList;let ind = index" [routerLink]="match.id" class="match-item" [style.background-color]="ind % 2 ? 'rgba(167, 164, 166, 0.8)' : 'white'">
-        <!-- <div matLine style="border: 2px solid; padding-bottom : 0px;display: flex; flex-direction: row; justify-content: space-around; width: 100%; align-items: center;">
-                <h2 style="border: 2px solid;"> {{match.team1}} </h2>
-                <h3>vs</h3>
-                <h2>{{match.team2}} </h2>
-        </div> -->
-        <h3 matLine style="text-align: center; padding: 0.1%;">{{match.team1}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  vs       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    {{match.team2}}</h3>
+        <div matLine class="row" style="padding-bottom : 0px;display: flex; flex-direction: row; justify-content: space-evenly; width: 100%; align-items: center;">
+                <div class="col-md-5" style="text-align: center; font-size: large;font-weight: bold;"> {{match.team1}} </div>
+                <div class="col-md-2" style="text-align: center;"> vs </div>
+                <div class="col-md-5" style="text-align: center; font-size: large; font-weight: bold;"> {{match.team2}} </div>
+        </div>
+        <!-- <h3 matLine style="text-align: center; padding: 0.1%;">{{match.team1}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  vs       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    {{match.team2}}</h3> -->
         <h6 matLine style="text-align: center; padding: 0.1%;margin-bottom: 0.1%;">
-                {{match.venue_name}}, {{match.venue_city}} <small>{{match.result}}</small> </h6>
+                {{match.venue_name}}, {{match.venue_city}} </h6>
+                <small matLine style="text-align: center;font-size: small;">{{match.winner}} won by {{match.win_margin}} {{match.win_type}}</small>
         <mat-divider></mat-divider>
     </mat-list-item>
 </mat-list>

@@ -451,7 +451,7 @@ async function points_table(year) {
 async function venues() {
     var result = []
     const query = {
-        text: "select venue.venue_id, venue_name, city_name as address, capacity, count(*) as total_matches from venue, match where venue.venue_id = match.venue_id group by venue.venue_id, venue_name, city_name, capacity;",
+        text: "select venue.venue_id, venue_name, city_name as address, capacity, (select count(*) from match where venue.venue_id = match.venue_id) as total_matches from venue;",
         values: []
     }
     result = await execute_query(query)
