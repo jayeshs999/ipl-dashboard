@@ -225,12 +225,12 @@ async function match_id(id) {
 
     result.score_comparison[0].runs = [0]
     const query22 = {
-        text: "select runs_scored+extra_runs as runs_scored from ball_by_ball where match_id = $1 and innings_no = 1;",
+        text: "select sum(runs_scored)+sum(extra_runs) as runs_scored from ball_by_ball where match_id = $1 and innings_no = 1 group by over_id order by over_id;",
         values: [id]
     }
     result.score_comparison[0].runs = result.score_comparison[0].runs.concat(await execute_retlist(query22, 'runs_scored'))
     for (let i=1; i<result.score_comparison[0].runs.length; i++) {
-        result.score_comparison[0].runs[i] = result.score_comparison[0].runs[i] + result.score_comparison[0].runs[i-1]
+        result.score_comparison[0].runs[i] = Number(result.score_comparison[0].runs[i]) + result.score_comparison[0].runs[i-1]
     }
 
     const query23 = {
@@ -240,7 +240,7 @@ async function match_id(id) {
     temp = await execute_query(query23)
     result.score_comparison[0].wickets = []
     for (let x in temp){
-        result.score_comparison[0].wickets.push((temp[x]['over_id']-1)*6 + (temp[x]['ball_id']-1))
+        result.score_comparison[0].wickets.push(temp[x]['over_id'])
     }
 
     result.score_comparison[1] = {}
@@ -253,12 +253,12 @@ async function match_id(id) {
 
     result.score_comparison[1].runs = [0]
     const query25 = {
-        text: "select runs_scored+extra_runs as runs_scored from ball_by_ball where match_id = $1 and innings_no = 2;",
+        text: "select sum(runs_scored)+sum(extra_runs) as runs_scored from ball_by_ball where match_id = $1 and innings_no = 2 group by over_id order by over_id;",
         values: [id]
     }
     result.score_comparison[1].runs = result.score_comparison[1].runs.concat(await execute_retlist(query25, 'runs_scored'))
     for (let i=1; i<result.score_comparison[1].runs.length; i++) {
-        result.score_comparison[1].runs[i] = result.score_comparison[1].runs[i] + result.score_comparison[1].runs[i-1]
+        result.score_comparison[1].runs[i] = Number(result.score_comparison[1].runs[i]) + result.score_comparison[1].runs[i-1]
     }
 
     const query26 = {
@@ -268,7 +268,7 @@ async function match_id(id) {
     temp = await execute_query(query26)
     result.score_comparison[1].wickets = []
     for (let x in temp){
-        result.score_comparison[1].wickets.push((temp[x]['over_id']-1)*6 + (temp[x]['ball_id']-1))
+        result.score_comparison[1].wickets.push(temp[x]['over_id']-1)
     }
     return result
 }
