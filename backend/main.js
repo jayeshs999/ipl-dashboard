@@ -465,7 +465,7 @@ async function venues() {
 async function venue(id) {
     var result = {}
     const query1 = {
-        text: "select venue_name, city_name, capacity, count(*) filter (where match_id is not null) as total_matches from match right join venue on match.venue_id = venue.venue_id where venue.venue_id = $1 group by venue_name, city_name, capacity;",
+        text: "select venue_name, city_name as address, capacity, count(*) filter (where match_id is not null) as total_matches from match right join venue on match.venue_id = venue.venue_id where venue.venue_id = $1 group by venue_name, city_name, capacity;",
         values: [id]
     }
     result.basicInfo = (await execute_query(query1))[0]
