@@ -147,7 +147,7 @@ async function match_id(id) {
     result.scorecard.innings1.bowling = {}
 
     const query11 = {
-        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs_given, count(*) filter (where out_type is not null) as wickets, count(*) as balls_bowled  from player_match inner join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.bowler, player  where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id  group by player_match.player_id, player.player_name; ",
+        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs_given, count(*) filter (where out_type is not null and out_type not in ('run out', 'retired hurt')) as wickets, count(*) as balls_bowled, count(distinct over_id) as overs_bowled  from player_match inner join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.bowler, player  where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id  group by player_match.player_id, player.player_name; ",
         values: [id, innings2]
     }
     result.scorecard.innings1.bowling.stats = await execute_query(query11)
@@ -197,7 +197,7 @@ async function match_id(id) {
     result.scorecard.innings2.bowling = {}
 
     const query18 = {
-        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs_given, count(*) filter (where out_type is not null) as wickets, count(*) as balls_bowled  from player_match inner join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.bowler, player  where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id  group by player_match.player_id, player.player_name; ",
+        text: "select player_match.player_id, player.player_name, coalesce (sum(runs_scored),0) as runs_given, count(*) filter (where out_type is not null and out_type not in ('run out', 'retired hurt')) as wickets, count(*) as balls_bowled, count(distinct over_id) as overs_bowled  from player_match inner join ball_by_ball on player_match.match_id = ball_by_ball.match_id and player_match.player_id = ball_by_ball.bowler, player  where player_match.match_id = $1 and team_id = $2 and player_match.player_id = player.player_id  group by player_match.player_id, player.player_name; ",
         values: [id, innings1]
     }
     result.scorecard.innings2.bowling.stats = await execute_query(query18)
@@ -284,7 +284,7 @@ async function player_id(id) {
 
 
     const query2 = {
-        text: "select coalesce(sum(runs_scored),0) as runs, count(*) filter (where runs_scored = 4) as fours, count(*) filter (where runs_scored = 6) as sixes, coalesce (count(*), 0) as strike_rate from ball_by_ball where ball_by_ball.striker = $1;",
+        text: "select coalesce(sum(runs_scored),0) as runs, sum(runs_scored) filter (where runs_scored = 4) as fours, sum(runs_scored) filter (where runs_scored = 6) as sixes, coalesce (count(*), 0) as strike_rate from ball_by_ball where ball_by_ball.striker = $1;",
         values: [id]
     }
     result.battingStats = (await execute_query(query2))[0]
@@ -292,33 +292,37 @@ async function player_id(id) {
         result.battingStats.strike_rate = (Number(result.battingStats.runs) / Number(result.battingStats.strike_rate))*100 
 
     const query3 = {
-        text: "select count(distinct match_id) from ball_by_ball where striker=$1",
+        text: "select count(distinct match_id) from player_match where player_id=$1;",
         values: [id]
     }
     result.battingStats.matches = (await execute_query(query3))[0].count
 
     const query4 = {
-        text: "select match_id, sum(runs_scored) from ball_by_ball where striker = $1 group by match_id;",
+        text: "select match_id, sum(runs_scored), count(*) filter (where out_type is not null) as outs from ball_by_ball where striker = $1 group by match_id order by match_id;",
         values: [id]
     }
     var temp = await execute_query(query4)
     result.battingStats.match_ids = await execute_retlist(query4, 'match_id')
     result.battingStats.match_runs = await execute_retlist(query4, 'sum')
-
+    // console.log(temp)
     var sum = 0
     var hs = 0
     var fifty = 0
+    var outs = 0
     for (let i=0; i<temp.length; i++){
         sum += Number(temp[i].sum)
         hs = Math.max(hs, temp[i].sum)
         if (temp[i].sum >= 50){
             fifty += 1
         }
+        outs += Number(temp[i].outs)
     }
     if (temp.length == 0)
         result.battingStats.average = 0
+    else if (outs == 0)
+        result.battingStats.average = sum
     else
-        result.battingStats.average = sum/temp.length
+        result.battingStats.average = sum/outs
     result.battingStats.hs = hs
     result.battingStats.fifties = fifty
 
@@ -340,7 +344,7 @@ async function player_id(id) {
     result.bowlingStats.matches = (await execute_query(query6))[0].count
 
     const query7 = {
-        text: "select match_id, sum(runs_scored) as runs, count (*) filter (where out_type is not null and out_type not in ('retired hurt', 'run out')) as wickets from ball_by_ball where bowler = $1 group by match_id;",
+        text: "select match_id, sum(runs_scored) as runs, count (*) filter (where out_type is not null and out_type not in ('retired hurt', 'run out')) as wickets from ball_by_ball where bowler = $1 group by match_id order by match_id;",
         values: [id]
     }
 
@@ -476,7 +480,7 @@ async function venue(id) {
     // console.log(temp)
 
     const query2 = {
-        text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select coalesce(max(runs2), 0) as maxm from inf  where runs2 > runs1  and venue_id = $1;",
+        text: "with info as ( select ball_by_ball.match_id, innings_no, sum(runs_scored) + sum(extra_runs) as runs, match.venue_id from ball_by_ball, match where ball_by_ball.match_id = match.match_id group by ball_by_ball.match_id, innings_no,  match.venue_id ), inf as ( select I1.match_id, I1.innings_no as innings1, I1.runs as runs1, I2.innings_no as innings2, I2.runs as runs2, I1.venue_id from info as I1, info as I2 where I1.match_id = I2.match_id and I1.innings_no = 1 and I2.innings_no = 2 ) select coalesce(max(runs1), 0) as maxm from inf  where runs2 > runs1  and venue_id = $1;",
         values: [id]
     }
     
