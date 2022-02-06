@@ -89,7 +89,7 @@
                     </ng-container>
 
                     <ng-container matColumnDef="total">
-                        <td mat-footer-cell *matFooterCellDef colspan="2">
+                        <td mat-footer-cell *matFooterCellDef colspan="2" style="background-color: #ccffff;">
                           Total
                         </td>
                     </ng-container>
@@ -100,8 +100,8 @@
                         </td>
                       </ng-container>
   
-                      <ng-container matColumnDef="total_info">
-                          <td mat-footer-cell *matFooterCellDef colspan="3">
+                      <ng-container matColumnDef="total_info" >
+                          <td mat-footer-cell *matFooterCellDef colspan="3" style="background-color: #ccffff;">
                             {{inningsInfo[i].batting.total_score}} - {{inningsInfo[i].batting.total_wickets}}
                           </td>
                       </ng-container>
