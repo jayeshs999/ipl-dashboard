@@ -292,7 +292,7 @@ async function player_id(id) {
         result.battingStats.strike_rate = (Number(result.battingStats.runs) / Number(result.battingStats.strike_rate))*100 
 
     const query3 = {
-        text: "select count(distinct match_id) from player_match where player_id=$1;",
+        text: "select count(distinct(match_id)) from ball_by_ball where striker = $1 or non_striker = $1;",
         values: [id]
     }
     result.battingStats.matches = (await execute_query(query3))[0].count
