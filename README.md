@@ -1,29 +1,34 @@
 # IITCricInfo
 
-This app provides a simple UI which can be used to view the result of IPL matches whose information is provided in the form of tables in csv files. We have used angular as frontend, Node.js as backend and Postgres as the database server. 
+This app provides a simple UI which can be used to view the result of IPL matches whose information is provided in the form of tables in csv files. We have used Angular for the frontend, Node.js for the backend and Postgres as the database server. 
 
 ## Instructions to run the code 
 
-First, using the lab4db.ddl file provided and the data, insert the data into the database named \'lab4db\'. 
+- Create a new database named **lab4db** and execute the file ```lab4.ddl``` provided.
+- Insert the data into the database. 
+- Navigate to the directory ```frontend``` and execute the following commands
+```
+# To install dependencies
+npm i 
+# To compile and start the frontend 
+ng serve
+``` 
+- Open a new terminal window and navigate to the directory ```backend``` and execute the following commands
 
-Now, navigate to the directory frontend and run command  
-`npm i` on the terminal to install the required modules
+```
+# To install dependencies
+npm i 
+# Run the backend server
+PGHOST='127.0.0.1' PGUSER='[user]' PGDATABASE='lab4db' PGPASSWORD='[pswd]' PGPORT=5432 node main.js 
+``` 
+- Open the url http://localhost:4200/ and enjoy using the app.
 
-Run the command  `ng serve` to compile and start the frontend.
-
-Now, navigate to the backend directory and run the command `npm i` to install the modules. 
-
-Run the command `PGHOST='127.0.0.1' PGUSER='[user]' PGDATABASE='lab4db' PGPASSWORD='[pswd]' PGPORT=5432 node main.js` to start the backend server. 
-
-Now, open the url http://localhost:4200/ and enjoy the app.
-
-
-## References used for the assignment
+## References
 
 - https://node-postgres.com
 - https://nodejs.org
 - https://www.tutorialspoint.com/nodejs/index.htm
--
--
--
+- http://jsfiddle.net/MTB2q/
+- https://material.angular.io/
+- https://www.chartjs.org/
 

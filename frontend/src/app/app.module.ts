@@ -40,13 +40,14 @@ import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { MatDividerModule } from '@angular/material/divider';
+
 import { MatchListComponent } from './match/match-list/match-list.component';
 import { MatchInfoComponent } from './match/match-info/match-info.component';
 import { PlayerListComponent } from './player/player-list/player-list.component';
 import { PlayerInfoComponent } from './player/player-info/player-info.component';
 import { VenueListComponent } from './venue/venue-list/venue-list.component';
 import { VenueInfoComponent } from './venue/venue-info/venue-info.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
+
 import { HttpClientModule } from '@angular/common/http';
 import { AddVenueComponent } from './venue/add-venue/add-venue.component';
 import { FormsModule } from '@angular/forms';
@@ -87,7 +88,6 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
-    NgApexchartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
