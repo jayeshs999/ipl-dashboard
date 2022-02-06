@@ -3,7 +3,7 @@ export const ScoreComparisonOptions = (num_balls:any, runs:any, wickets:any, tea
     return {
         type: 'line',
         data: {
-            labels: Array.from(Array(num_balls[0] > num_balls[1] ? num_balls[0] : num_balls[1]).keys()),
+            labels: Array.from(Array(21).keys()),
             datasets: [{
                 label: teams[0],
                 data: runs[0].map((e:any,i:any)=>{
@@ -62,12 +62,6 @@ export const ScoreComparisonOptions = (num_balls:any, runs:any, wickets:any, tea
                         },
 
                     },
-                    ticks: {
-                        callback: (val: any, index: any) => {
-                            // Hide every 2nd tick label
-                            return index % 6 == 0 ? (index / 6).toString() : '';
-                        }
-                    }
                 }
             },
             plugins: {
