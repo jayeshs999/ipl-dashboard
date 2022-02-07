@@ -270,7 +270,7 @@ async function match_id(id) {
     temp = await execute_query(query26)
     result.score_comparison[1].wickets = []
     for (let x in temp){
-        result.score_comparison[1].wickets.push(temp[x]['over_id']-1)
+        result.score_comparison[1].wickets.push(temp[x]['over_id'])
     }
     return result
 }
