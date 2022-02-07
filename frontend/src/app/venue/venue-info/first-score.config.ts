@@ -6,7 +6,8 @@ export const FirstScoreOptions = (season_year:any[], avg_first_score:any[]) : an
         datasets: [{
             label: '',
             data: avg_first_score,
-            pointRadius: 1,
+            pointRadius: 5,
+            pointBackgroundColor : 'rgb(75, 192, 192)',
             borderColor: 'rgb(75, 192, 192)',
             tension: 0.0
         }]
